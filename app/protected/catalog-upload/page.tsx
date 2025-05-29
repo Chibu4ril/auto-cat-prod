@@ -2,22 +2,13 @@
 
 // import { handleDatasetUpload, handleFileChange } from "../actions";
 import { useEffect, useState } from "react";
-import {
-  FileSpreadsheet,
-  Frown,
-  Info,
-  Smile,
-  UploadCloud,
-  X,
-} from "lucide-react";
+import { Frown, Smile, UploadCloud, X } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
-import CatalogPage from "@/components/tables/catalog-preview/page";
 import { redirect } from "next/navigation";
 // import { fetchUploadedFiles } from "../api/api";
 
