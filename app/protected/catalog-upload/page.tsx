@@ -1,6 +1,5 @@
 "use client";
 
-// import { handleDatasetUpload, handleFileChange } from "../actions";
 import { useEffect, useState } from "react";
 import { Frown, Smile, UploadCloud, X } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -10,6 +9,15 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
 import { redirect } from "next/navigation";
+
+import { createBrowserClient } from "@supabase/ssr"; // Client-side Supabase initialization
+import { handleFileChange } from "@/app/actions";
+
+const supabase = createBrowserClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
 // import { fetchUploadedFiles } from "../api/api";
 
 export default function UploadCard() {
@@ -19,26 +27,35 @@ export default function UploadCard() {
     success: boolean;
   } | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [checkbox, setCheckbox] = useState(false);
-  const [dataset, setDataset] = useState<File | null>(null);
 
-  // Function to handle file selection
   const onFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file && file.type === "text/csv" && file.size <= 1024 * 1024) {
+
+    if (!file) return;
+
+    const allowedExtensions = [".csv", ".xlsx", ".tsv"];
+    const fileExtension = file.name
+      .substring(file.name.lastIndexOf("."))
+      .toLowerCase();
+
+    const maxFileSizeMB = 30;
+    const maxFileSizeBytes = maxFileSizeMB * 1024 * 1024;
+
+    if (
+      allowedExtensions.includes(fileExtension) &&
+      file.size <= maxFileSizeBytes
+    ) {
       setSelectedFile(file);
-      setDataset(file);
     } else {
       setSelectedFile(null);
       setUploadStatus({
-        message: "Please select a valid CSV file (max 1MB).",
+        message: "Please select a valid CSV, XLSX, or TSV file (max 1MB).",
         success: false,
       });
-      return;
     }
   };
 
-  const handleFileProcessing = async () => {
+  const handleUpload = async () => {
     if (!selectedFile) {
       setUploadStatus({
         message: "No file selected. Please select a file first.",
@@ -48,11 +65,27 @@ export default function UploadCard() {
     }
 
     let error;
-    // setUploading(true);
-    // const fileName = `${selectedFile.name}`;
-    redirect("/protected/catalog-preview");
+    setUploading(true);
+    const fileName = `${selectedFile.name}`;
 
-    // setUploading(false);
+    ({ error } = await handleFileChange(selectedFile, fileName));
+
+    if (error) {
+      setUploadStatus({
+        message: typeof error === "string" ? error : error.message,
+        success: false,
+      });
+    } else {
+      localStorage.setItem("uploadedFilePath", fileName);
+      setUploadStatus({
+        message: "You have upload your dataset successfully!",
+        success: true,
+      });
+      setSelectedFile(null);
+      redirect("/protected/catalog-preview");
+    }
+
+    setUploading(false);
   };
 
   useEffect(() => {
@@ -71,7 +104,6 @@ export default function UploadCard() {
       {uploadStatus && (
         <div className="mb-4">
           <Alert
-            variant={"destructive"}
             color={uploadStatus.success ? "success" : "failure"}
             // onDismiss={() => setU`ploadStatus(null)}
             className="rounded-sm"
@@ -110,6 +142,7 @@ export default function UploadCard() {
             <Input
               id="dropzone-file"
               className="hidden"
+              accept=".csv,.xlsx,.tsv"
               onChange={onFileSelect}
               type="file"
             />
@@ -167,10 +200,10 @@ export default function UploadCard() {
                     ) : (
                       <Button
                         className="w-full border-blue-700 text-blue-700  enabled:hover:bg-blue-600 enabled:hover:text-white rounded-sm py-1"
-                        onClick={handleFileProcessing}
+                        onClick={handleUpload}
                         variant={"outline"}
                       >
-                        Process File
+                        Upload File
                       </Button>
                     )}
                   </div>

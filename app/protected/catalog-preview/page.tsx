@@ -1,10 +1,10 @@
-import CatalogPage from "@/components/tables/catalog-preview/page";
+import CatalogTable from "@/components/tables/catalog-preview/CatalogTableClient";
 import React from "react";
 
 function CatalogPreview() {
   return (
     <div>
-      <CatalogPage />
+      <CatalogTable />
     </div>
   );
 }
