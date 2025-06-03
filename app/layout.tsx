@@ -45,6 +45,17 @@ export default function RootLayout({
                       <AutoLogo />
                     </a>
                   </div>
+                  <div className="mx-auto">
+                    <a href="protected/catalog-preview" className="">
+                      Product Catalog
+                    </a>
+                    <a href="" className="ml-5">
+                      Audit Logs
+                    </a>
+                    <a href="/protected/catalog-upload" className="ml-5">
+                      Upload Catalog
+                    </a>
+                  </div>
                   {<HeaderAuth />}
                 </div>
               </nav>

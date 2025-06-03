@@ -42,7 +42,7 @@ export default function CatalogTable() {
         const json = await response.json();
         console.log("Parsed CSV data:", json);
 
-        setDataProfile(json.data);
+        setDataProfile(json);
       } catch (error) {
         console.error("Error fetching parsed CSV:", error);
       }

@@ -30,11 +30,13 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-export async function catalogProcess() {
+export async function catalogProcess(page = 1, pageSize = 50) {
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
   const { data, error } = await supabase
     .from("cleaned_products")
     .select("*")
-    .limit(100);
+    .range(from, to);
 
   if (error) {
     console.error("Failed to fetch catalog:", error.message);

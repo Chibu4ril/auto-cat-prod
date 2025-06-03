@@ -14,6 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useEffect, useState } from "react";
+import { catalogProcess } from "./data-table";
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
@@ -22,6 +24,13 @@ interface DataTablePaginationProps<TData> {
 export function DataTablePagination<TData>({
   table,
 }: DataTablePaginationProps<TData>) {
+  const [pageSize, setPageSize] = useState(50);
+  const [page, setPage] = useState(1);
+  const [data, setData] = useState<any[]>([]);
+  useEffect(() => {
+    catalogProcess(page, pageSize).then(setData);
+  }, [page, pageSize]);
+
   return (
     <div className="flex items-center justify-between px-2">
       <div className="text-muted-foreground flex-1 text-sm">
@@ -32,18 +41,16 @@ export function DataTablePagination<TData>({
         <div className="flex items-center space-x-2">
           <p className="text-sm font-medium">Rows per page</p>
           <Select
-            value={`${table.getState().pagination.pageSize}`}
-            onValueChange={(value) => {
-              table.setPageSize(Number(value));
-            }}
+            value={`${pageSize}`}
+            onValueChange={(val) => setPageSize(Number(val))}
           >
             <SelectTrigger className="h-8 w-[70px]">
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
             <SelectContent side="top">
-              {[15, 25, 50, 100].map((pageSize) => (
-                <SelectItem key={pageSize} value={`${pageSize}`}>
-                  {pageSize}
+              {[10, 25, 50, 100, 250, 500, 1000].map((size) => (
+                <SelectItem key={size} value={`${size}`}>
+                  {size}
                 </SelectItem>
               ))}
             </SelectContent>

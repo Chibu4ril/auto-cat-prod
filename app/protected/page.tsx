@@ -49,7 +49,7 @@ export default async function ProtectedPage() {
       <div className="w-full flex flex-col gap-6 min-w-5xl">
         <div className="flex flex-col gap-6">
           <div className="flex justify-end">
-            <Button className="bg-blue-600 rounded-none">
+            <Button className="bg-blue-600 rounded-none dark:text-white hover:bg-blue-700">
               <Link href="/protected/catalog-upload">Upload Catalog</Link>
             </Button>
           </div>
