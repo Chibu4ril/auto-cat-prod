@@ -46,7 +46,7 @@ export default function RootLayout({
                     </a>
                   </div>
                   <div className="mx-auto">
-                    <a href="protected/catalog-preview" className="">
+                    <a href="/catalog-preview" className="">
                       Product Catalog
                     </a>
                     <a href="" className="ml-5">

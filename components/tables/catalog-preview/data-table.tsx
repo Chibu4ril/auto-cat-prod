@@ -33,6 +33,7 @@ interface DataTableProps<TData, TValue> {
 export async function catalogProcess(page = 1, pageSize = 50) {
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
+
   const { data, error } = await supabase
     .from("cleaned_products")
     .select("*")
